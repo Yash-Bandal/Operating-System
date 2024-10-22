@@ -21,6 +21,16 @@ view_address_book() {
         echo "Address book does not exist."
     fi
 }
+search_contact() {
+    echo "Enter the name to search:"
+    read search_name
+    if [ -f  $ADDRESS_BOOK ]; then
+        grep -i "$search_name" $ADDRESS_BOOK
+    else
+        echo "Address book is empty."
+    fi
+}
+
 
 # Function to insert a record
 insert_record() {
@@ -44,18 +54,7 @@ delete_record() {
 
 # Function to modify a record
 modify_record() {
-    echo "Enter the name of the record to modify:"
-    read name
-    if grep -q "^$name |" $ADDRESS_BOOK; then
-        echo "Enter new Phone Number:"
-        read new_phone
-        echo "Enter new Email:"
-        read new_email
-        sed -i.bak "s/^$name |.*$/$name | $new_phone | $new_email/" $ADDRESS_BOOK
-        echo "Record modified."
-    else
-        echo "Record not found."
-    fi
+  gedit address_book.sh
 }
 
 # Main menu
@@ -67,6 +66,7 @@ while true; do
     echo "d) Delete Record"
     echo "e) Modify Record"
     echo "f) Exit"
+    echo "g) search contact"
     read -p "Choose an option: " option
 
     case $option in
@@ -75,6 +75,7 @@ while true; do
         c) insert_record ;;
         d) delete_record ;;
         e) modify_record ;;
+        g) search_contact ;;
         f) exit 0 ;;
         *) echo "Invalid option. Please try again." ;;
     esac
@@ -83,4 +84,3 @@ done
 #gedit address_book.sh
 #chmod +x address_book.sh
 #./address_book.sh
-
