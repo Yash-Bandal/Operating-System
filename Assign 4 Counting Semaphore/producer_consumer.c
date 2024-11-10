@@ -24,7 +24,7 @@ void* producer(void* arg) {
 
         // Produce an item and place it in the buffer
         buffer[in] = i;
-        printf("Produced: %d\n", buffer[in]);
+        printf("Produced: %d\n", buffer[in]);  //[ 0, _, _, _, _ ]
         in = (in + 1) % BUFFER_SIZE;     // Update the producer index
 
         pthread_mutex_unlock(&mutex);    // Exit critical section
