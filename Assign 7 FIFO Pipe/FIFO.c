@@ -14,7 +14,7 @@ int main() {
     int shmid = shmget(key, SHM_SIZE, 0666 | IPC_CREAT);  // Create shared memory
 
     // Attach to shared memory
-    char *str = (char *)shmat(shmid, (void *)0, 0);
+    char *str = (char *)shmat(shmid, (void *)0, 0);  //shared memo attch
 
     printf("Server: Listening for messages...\n");
 
@@ -28,13 +28,13 @@ int main() {
     }
 
     // Detach from shared memory
-    shmdt(str);  
+    shmdt(str);  //shared memo detach
     return 0;
 }
 --------------------------------------------
 //client.c
 
-    #include <stdio.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <sys/ipc.h>
 #include <sys/shm.h>
