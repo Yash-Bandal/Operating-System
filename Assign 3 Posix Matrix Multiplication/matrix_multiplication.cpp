@@ -26,7 +26,7 @@ void* multiply_row(void* row) {
     for (int i = 0; i < SIZE; i++) {
         C[r][i] = 0; // Initialize the result cell
         for (int j = 0; j < SIZE; j++) {
-            C[r][i] += A[r][j] * B[j][i]; // Perform multiplication
+            C[r][i] += A[r][j] * B[j][i]; // Perform multiplication    ri = rj*ji
         }
     }
     return NULL;
