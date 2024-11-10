@@ -62,12 +62,12 @@ int main() {
     pthread_mutex_init(&mutex, NULL);  // Initialize mutex
 
     // Create producer and consumer threads
-    pthread_create(&prod, NULL, producer, NULL);
+    pthread_create(&prod, NULL, producer, NULL);  //silly -> no & to function
     pthread_create(&cons, NULL, consumer, NULL);
 
     // Wait for both threads to complete
     pthread_join(prod, NULL);
-    pthread_join(cons, NULL);
+    pthread_join(cons, NULL);          //then no & to variable
 
     // Clean up resources
     sem_destroy(&empty);
