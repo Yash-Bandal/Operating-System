@@ -64,7 +64,8 @@ int main() {
 }
 
 
-
+//gcc -o pipe_example pipe_example.c
+// ./name
 
 
 
