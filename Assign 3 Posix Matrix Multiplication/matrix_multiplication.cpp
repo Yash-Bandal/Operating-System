@@ -34,7 +34,7 @@ void* multiply_row(void* row) {
 
 int main() {
     pthread_t threads[SIZE];
-    int row_indices[SIZE]; // Array to hold row indices
+    int row_indices[SIZE]; // Array to hold row indices [0 0 0 0]
 
     // Create threads for each row
     for (int i = 0; i < SIZE; i++) {
