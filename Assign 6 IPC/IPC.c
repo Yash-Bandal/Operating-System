@@ -12,7 +12,7 @@ int main() {
     pid_t cpid;   //pid of child
     char buffer[BUFFER_SIZE];
 
-    // Create a pipe
+    // Create a pipe..chk if not exist
     if (pipe(pipefd) == -1) {
         perror("pipe");
         exit(EXIT_FAILURE);
