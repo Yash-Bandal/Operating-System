@@ -9,7 +9,7 @@
 
 int main() {
     int pipefd[2]; // Pipe file descriptors
-    pid_t cpid;
+    pid_t cpid;   //pid of child
     char buffer[BUFFER_SIZE];
 
     // Create a pipe
