@@ -76,3 +76,12 @@ int main() {
 
     return 0;
 }
+
+// gcc producer_consumer.c -lpthread
+// ./a.out
+
+//oe gcc -o producer_consumer producer_consumer.c -lpthread
+//./producer_consumer
+
+
+    
