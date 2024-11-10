@@ -23,10 +23,10 @@ int C[SIZE][SIZE]; // Result matrix
 // Function to multiply a specific row
 void* multiply_row(void* row) {
     int r = *((int*)row); // Get the row index
-    for (int j = 0; j < SIZE; j++) {
-        C[r][j] = 0; // Initialize the result cell
-        for (int k = 0; k < SIZE; k++) {
-            C[r][j] += A[r][k] * B[k][j]; // Perform multiplication
+    for (int i = 0; i < SIZE; i++) {
+        C[r][i] = 0; // Initialize the result cell
+        for (int j = 0; j < SIZE; j++) {
+            C[r][i] += A[r][j] * B[j][i]; // Perform multiplication
         }
     }
     return NULL;
