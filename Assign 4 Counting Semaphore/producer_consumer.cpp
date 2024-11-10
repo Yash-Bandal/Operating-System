@@ -1,76 +1,78 @@
-#include <iostream>
-#include <thread>
+#include <stdio.h>
+#include <stdlib.h>
+#include <pthread.h>
 #include <semaphore.h>
-#include <mutex>
-#include <vector>
-#include <chrono>
+#include <unistd.h>
 
-using namespace std;
+#define BUFFER_SIZE 5 // Size of the buffer
 
-const int BUFFER_SIZE = 5; // Size of the buffer
-vector<int> buffer(BUFFER_SIZE); // The shared buffer
-int count = 0; // Current number of items in the buffer
-mutex mtx; // Mutex for mutual exclusion
-sem_t empty; // Semaphore to count empty slots
-sem_t full; // Semaphore to count full slots
+// Shared buffer and index variables for producer and consumer
+int buffer[BUFFER_SIZE];
+int in = 0;  // Index for the producer
+int out = 0; // Index for the consumer
+
+// Semaphores and mutex for synchronization
+sem_t empty;         // Tracks empty slots in the buffer
+sem_t full;          // Tracks filled slots in the buffer
+pthread_mutex_t mutex; // Mutex to ensure mutual exclusion
 
 // Producer function
-void producer(int id) {
-    for (int i = 0; i < 10; ++i) {
-        this_thread::sleep_for(chrono::milliseconds(rand() % 100)); // Simulate production time
+void* producer(void* arg) {
+    for (int i = 0; i < 10; i++) { // Produces 10 items
+        sem_wait(&empty);               // Wait for an empty slot
+        pthread_mutex_lock(&mutex);      // Enter critical section
 
-        int item = rand() % 100; // Produce an item
+        // Produce an item and place it in the buffer
+        buffer[in] = i;
+        printf("Produced: %d\n", buffer[in]);
+        in = (in + 1) % BUFFER_SIZE;     // Update the producer index
 
-        sem_wait(&empty); // Decrease empty count
-        mtx.lock(); // Lock the buffer
-        buffer[count] = item; // Add item to buffer
-        cout << "Producer " << id << " produced: " << item << endl;
-        count++; // Increase the count
-        mtx.unlock(); // Unlock the buffer
-        sem_post(&full); // Increase full count
+        pthread_mutex_unlock(&mutex);    // Exit critical section
+        sem_post(&full);                 // Signal that a new item is available
+        sleep(1);                        // Simulate production time
     }
+    return NULL;
 }
 
 // Consumer function
-void consumer(int id) {
-    for (int i = 0; i < 10; ++i) {
-        sem_wait(&full); // Decrease full count
-        mtx.lock(); // Lock the buffer
-        int item = buffer[count - 1]; // Consume an item
-        count--; // Decrease the count
-        cout << "Consumer " << id << " consumed: " << item << endl;
-        mtx.unlock(); // Unlock the buffer
-        sem_post(&empty); // Increase empty count
-        this_thread::sleep_for(chrono::milliseconds(rand() % 100)); // Simulate consumption time
+void* consumer(void* arg) {
+    for (int i = 0; i < 10; i++) { // Consumes 10 items
+        sem_wait(&full);               // Wait for a filled slot
+        pthread_mutex_lock(&mutex);     // Enter critical section
+
+        // Consume an item from the buffer
+        int item = buffer[out];
+        printf("Consumed: %d\n", item);
+        out = (out + 1) % BUFFER_SIZE;  // Update the consumer index
+
+        pthread_mutex_unlock(&mutex);   // Exit critical section
+        sem_post(&empty);               // Signal that a slot is now empty
+        sleep(1);                       // Simulate consumption time
     }
+    return NULL;
 }
 
 int main() {
-    // Initialize semaphores
+    // Thread variables for producer and consumer
+    pthread_t prod, cons;
+
+    // Initialize semaphores and mutex
     sem_init(&empty, 0, BUFFER_SIZE); // Start with all slots empty
-    sem_init(&full, 0, 0); // Start with no items
+    sem_init(&full, 0, 0);            // Start with no filled slots
+    pthread_mutex_init(&mutex, NULL);  // Initialize mutex
 
     // Create producer and consumer threads
-    thread producers[2], consumers[2];
+    pthread_create(&prod, NULL, producer, NULL);
+    pthread_create(&cons, NULL, consumer, NULL);
 
-    for (int i = 0; i < 2; ++i) {
-        producers[i] = thread(producer, i + 1);
-        consumers[i] = thread(consumer, i + 1);
-    }
+    // Wait for both threads to complete
+    pthread_join(prod, NULL);
+    pthread_join(cons, NULL);
 
-    // Join threads
-    for (int i = 0; i < 2; ++i) {
-        producers[i].join();
-        consumers[i].join();
-    }
-
-    // Destroy semaphores
+    // Clean up resources
     sem_destroy(&empty);
     sem_destroy(&full);
+    pthread_mutex_destroy(&mutex);
 
     return 0;
 }
-//g++ -o producer_consumer producer_consumer.cpp -lpthread
-
-//./producer_consumer
-
