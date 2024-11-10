@@ -1,3 +1,58 @@
+    
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <string.h>
+#include<sys/wait.h>
+
+#define BUFFER_SIZE 100
+
+int main() {
+    int pipefd[2]; // Pipe file descriptors
+    pid_t cpid;
+    char buffer[BUFFER_SIZE];
+
+    // Create a pipe
+    if (pipe(pipefd) == -1) {
+        perror("pipe");
+        exit(EXIT_FAILURE);
+    }
+
+    // Fork a child process
+    cpid = fork();
+    if (cpid == -1) {
+        perror("fork");
+        exit(EXIT_FAILURE);
+    }
+
+    if (cpid == 0) { // Child process
+        close(pipefd[1]); // Close unused write end
+
+        // Read from the pipe
+        read(pipefd[0], buffer, sizeof(buffer));
+        printf("Child received: %s\n", buffer);
+        close(pipefd[0]); // Close read end
+        _exit(0); // Exit child process
+    } else { // Parent process
+        close(pipefd[0]); // Close unused read end
+
+        // Write to the pipe
+        const char* message = "Hello from the parent process!";
+        write(pipefd[1], message, strlen(message) + 1); // Include null terminator
+        close(pipefd[1]); // Close write end
+
+        // Wait for the child to finish
+        wait(NULL);
+    }
+
+    return 0;
+}
+
+
+
+
+
+
 // #include <stdio.h>
 // #include <stdlib.h>
 // #include <unistd.h>
@@ -67,52 +122,3 @@
 // }
 
 ------------------------------------------------------------------------------
-    
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <string.h>
-#include<sys/wait.h>
-
-#define BUFFER_SIZE 100
-
-int main() {
-    int pipefd[2]; // Pipe file descriptors
-    pid_t cpid;
-    char buffer[BUFFER_SIZE];
-
-    // Create a pipe
-    if (pipe(pipefd) == -1) {
-        perror("pipe");
-        exit(EXIT_FAILURE);
-    }
-
-    // Fork a child process
-    cpid = fork();
-    if (cpid == -1) {
-        perror("fork");
-        exit(EXIT_FAILURE);
-    }
-
-    if (cpid == 0) { // Child process
-        close(pipefd[1]); // Close unused write end
-
-        // Read from the pipe
-        read(pipefd[0], buffer, sizeof(buffer));
-        printf("Child received: %s\n", buffer);
-        close(pipefd[0]); // Close read end
-        _exit(0); // Exit child process
-    } else { // Parent process
-        close(pipefd[0]); // Close unused read end
-
-        // Write to the pipe
-        const char* message = "Hello from the parent process!";
-        write(pipefd[1], message, strlen(message) + 1); // Include null terminator
-        close(pipefd[1]); // Close write end
-
-        // Wait for the child to finish
-        wait(NULL);
-    }
-
-    return 0;
-}
