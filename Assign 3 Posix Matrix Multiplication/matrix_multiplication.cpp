@@ -58,7 +58,13 @@ int main() {
 
     return 0;
 }
-
+/*
+    [j0 j1 j2 j3]
+[r0] [ 0 1 2 3]
+[r0] [ 1      ]
+[r0] [ 2      ]
+[r0] [ 4      ]
+*/
 
 
 //gedit matrix_multiplication.cpp
