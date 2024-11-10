@@ -79,9 +79,12 @@ void* philosopher(void* num) {
 }
 
 int main() {
+
+    //1 Initialize
     pthread_t threads[N];
     pthread_mutex_init(&mutex, NULL);
-    
+
+    //2 Create
     for (int i = 0; i < N; i++) {
         state[i] = THINKING; // Initialize state to THINKING
         pthread_cond_init(&S[i], NULL);
@@ -90,11 +93,13 @@ int main() {
         pthread_create(&threads[i], NULL, philosopher, arg);
         printf("Philosopher %d is thinking\n", i + 1);
     }
-
+    
+   //3 Join
     for (int i = 0; i < N; i++) {
         pthread_join(threads[i], NULL);
     }
 
+    //4 Destroy
     pthread_mutex_destroy(&mutex);
     for (int i = 0; i < N; i++) {
         pthread_cond_destroy(&S[i]);
