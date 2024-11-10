@@ -71,7 +71,7 @@ void* philosopher(void* num) {
     int* phnum = (int*)num;
 
     while (1) {
-        take_fork(*phnum);
+        take_fork(*phnum);  //* not & silly
         put_fork(*phnum);
     }
 
